@@ -2,232 +2,817 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>WhisperVault</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>">
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui,sans-serif
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --bg: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #0b1120;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #334155;
+            --shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+            --shadow-soft: 0 4px 20px -4px rgba(0, 0, 0, 0.3);
+            --radius: 16px;
+            --radius-lg: 24px;
         }
 
         body {
-            background: #0f172a;
-            color: #f1f5f9;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            padding: 20px
+            min-height: 100dvh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+            /* Фоновый градиент */
+            body::before {
+                content: '';
+                position: fixed;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15), transparent 50%);
+                pointer-events: none;
+                z-index: 0;
+                animation: pulse 8s ease-in-out infinite;
+            }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        /* Контейнер */
+        .container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Экран входа */
+        #login {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(16px, 4vw, 32px);
         }
 
         .card {
-            background: #1e293b;
-            padding: 24px;
-            border-radius: 16px;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            padding: clamp(24px, 5vw, 40px);
+            border-radius: var(--radius-lg);
             width: 100%;
-            max-width: 450px;
-            margin: 0 auto;
-            border: 1px solid #334155
+            max-width: 420px;
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            box-shadow: var(--shadow);
+            animation: slideUp 0.4s ease;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 8px
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        p {
+        .logo {
             text-align: center;
-            color: #94a3b8;
-            margin-bottom: 20px;
-            font-size: 0.9rem
+            margin-bottom: 24px;
+        }
+
+        .logo-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 8px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .logo-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+
+        .logo-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Поля ввода */
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
         }
 
         input {
             width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            background: #0b1120;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            color: #f1f5f9;
-            font-size: 1rem
+            padding: 14px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease;
         }
+
+            input::placeholder {
+                color: var(--text-dim);
+            }
 
             input:focus {
-                outline: none;
-                border-color: #6366f1
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
             }
 
+            input:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+        /* Кнопки */
         .btn {
             width: 100%;
-            padding: 12px;
-            margin-top: 8px;
-            background: #6366f1;
+            padding: 14px 20px;
             border: none;
-            border-radius: 10px;
-            color: white;
+            border-radius: var(--radius);
+            font-size: 1rem;
             font-weight: 600;
-            cursor: pointer
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
         }
 
-            .btn:hover {
-                background: #4f46e5
+            .btn:active {
+                transform: scale(0.98);
             }
 
-            .btn:disabled {
-                opacity: 0.6
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+        }
+
+            .btn-primary:hover {
+                box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+                transform: translateY(-1px);
             }
 
-        .btn2 {
+            .btn-primary:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none !important;
+            }
+
+        .btn-secondary {
             background: transparent;
-            border: 1px solid #334155;
-            color: #94a3b8
+            border: 1px solid var(--border);
+            color: var(--text-muted);
         }
 
-            .btn2:hover {
-                color: #f1f5f9;
-                border-color: #6366f1
+            .btn-secondary:hover {
+                border-color: var(--primary);
+                color: var(--text);
+                background: rgba(99, 102, 241, 0.1);
             }
 
-        .err {
-            color: #ef4444;
-            text-align: center;
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(239,68,68,0.1);
-            border-radius: 10px;
-            display: none
-        }
-
-            .err.show {
-                display: block
-            }
-
-        .debug {
-            background: #1e293b;
-            border: 1px solid #f59e0b;
-            border-radius: 10px;
-            padding: 12px;
+        /* Ошибки */
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+            padding: 12px 16px;
+            border-radius: var(--radius);
             margin-top: 16px;
-            font-size: 0.85rem;
-            color: #f59e0b
+            font-size: 0.9rem;
+            text-align: center;
+            display: none;
+            animation: shake 0.3s ease;
         }
 
+            .error.show {
+                display: block;
+            }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-4px);
+            }
+
+            75% {
+                transform: translateX(4px);
+            }
+        }
+
+        /* Экран чата */
         #chat {
             display: none;
             flex-direction: column;
-            height: 100vh
+            height: 100vh;
+            height: 100dvh;
         }
 
-        .hdr {
-            padding: 12px;
-            background: #1e293b;
-            border-bottom: 1px solid #334155;
+            #chat.active {
+                display: flex;
+                animation: fadeIn 0.3s ease;
+            }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Шапка */
+        .header {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
             display: flex;
-            justify-content: space-between
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
-        .msgs {
+        .room-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .room-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .room-details h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .room-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse-dot 2s infinite;
+        }
+
+            .status-dot.offline {
+                background: var(--text-dim);
+                animation: none;
+            }
+
+        @keyframes pulse-dot {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.2rem;
+        }
+
+            .icon-btn:active {
+                transform: scale(0.95);
+            }
+
+            .icon-btn:hover {
+                border-color: var(--primary);
+                color: var(--primary);
+            }
+
+            .icon-btn.danger {
+                color: var(--danger);
+                border-color: rgba(239, 68, 68, 0.3);
+            }
+
+                .icon-btn.danger:hover {
+                    background: rgba(239, 68, 68, 0.1);
+                }
+
+        /* Сообщения */
+        .messages {
             flex: 1;
             overflow-y: auto;
             padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 10px
+            gap: 12px;
+            scroll-behavior: smooth;
         }
 
-        .msg {
+        .message {
             max-width: 85%;
-            padding: 10px 14px;
-            border-radius: 14px;
-            word-wrap: break-word
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            animation: messageIn 0.3s ease;
         }
 
-            .msg.in {
-                align-self: flex-start;
-                background: #334155
+        @keyframes messageIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
             }
 
-            .msg.out {
-                align-self: flex-end;
-                background: #6366f1
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
             }
-
-        .meta {
-            font-size: 0.75rem;
-            opacity: 0.7;
-            margin-bottom: 4px
         }
 
-        .inp {
-            padding: 12px;
-            background: #1e293b;
-            border-top: 1px solid #334155;
+        .message.incoming {
+            align-self: flex-start;
+            background: var(--bg-card);
+            border-bottom-left-radius: 6px;
+        }
+
+        .message.outgoing {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-bottom-right-radius: 6px;
+        }
+
+        .message-meta {
             display: flex;
-            gap: 8px
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 0.75rem;
+            opacity: 0.8;
         }
 
-        #txt {
+        .message.outgoing .message-meta {
+            justify-content: flex-end;
+        }
+
+        .message-time {
+            opacity: 0.6;
+            font-size: 0.7rem;
+        }
+
+        .system-message {
+            align-self: center;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 8px 0;
+        }
+
+        /* Поле ввода */
+        .input-area {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-wrapper-chat {
             flex: 1;
-            padding: 12px;
-            border-radius: 24px;
-            border: 1px solid #334155;
-            background: #0b1120;
-            color: #f1f5f9
+            position: relative;
         }
 
-        .send {
-            width: 44px;
-            height: 44px;
+            .input-wrapper-chat input {
+                padding: 14px 20px;
+                border-radius: 24px;
+                font-size: 1rem;
+            }
+
+        .send-btn {
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            background: #6366f1;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border: none;
             color: white;
-            cursor: pointer
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+            flex-shrink: 0;
+        }
+
+            .send-btn:active {
+                transform: scale(0.95);
+            }
+
+            .send-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+        /* Уведомления (Toast) */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 90%;
+            max-width: 360px;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+            animation: toastIn 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Адаптив для телефонов */
+        @media (max-width: 480px) {
+            .card {
+                padding: 24px 20px;
+                margin: 16px;
+            }
+
+            .logo-icon {
+                font-size: 2.5rem;
+            }
+
+            .logo-title {
+                font-size: 1.5rem;
+            }
+
+            .message {
+                max-width: 90%;
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+
+            .header {
+                padding: 10px 14px;
+            }
+
+            .room-avatar {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+
+            .input-area {
+                padding: 10px 14px;
+            }
+
+            .send-btn {
+                width: 44px;
+                height: 44px;
+            }
+        }
+
+        /* Безопасная зона для iPhone */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .input-area {
+                padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--primary);
+            }
+
+        /* Пустое состояние */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        /* Индикатор набора */
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            align-self: flex-start;
+            background: var(--bg-card);
+            border-radius: 20px;
+            margin: 4px 0;
+        }
+
+            .typing-indicator.show {
+                display: flex;
+            }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+            .typing-dots span {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--text-muted);
+                animation: typing 1.4s infinite ease-in-out;
+            }
+
+                .typing-dots span:nth-child(2) {
+                    animation-delay: 0.2s;
+                }
+
+                .typing-dots span:nth-child(3) {
+                    animation-delay: 0.4s;
+                }
+
+        @keyframes typing {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-4px);
+            }
         }
     </style>
 </head>
 <body>
-    <!-- ЭКРАН ВХОДА -->
-    <div id="login">
-        <div class="card">
-            <h1>🗝️ WhisperVault</h1>
-            <p>Приватный чат • Сообщения исчезают в 00:00</p>
+    <div class="container">
+        <!-- ЭКРАН ВХОДА -->
+        <div id="login">
+            <div class="card">
+                <div class="logo">
+                    <span class="logo-icon">🗝️</span>
+                    <h1 class="logo-title">WhisperVault</h1>
+                    <p class="logo-subtitle">Приватный чат • Сообщения исчезают в 00:00</p>
+                </div>
 
-            <input id="nick" placeholder="Ваш ник (мин. 2 символа)">
-            <input id="room" placeholder="Название комнаты (мин. 3 символа)">
-            <input id="pass" type="password" placeholder="Пароль (мин. 6 символов)">
+                <div class="input-group">
+                    <label class="input-label" for="nick">Ваш никнейм</label>
+                    <div class="input-wrapper">
+                        <input id="nick" placeholder="Например: Luna" maxlength="15" autocomplete="off">
+                    </div>
+                </div>
 
-            <button class="btn" id="btn" onclick="login()">🚀 Войти / Создать</button>
-            <button class="btn btn2" onclick="rnd()">🎲 Случайная комната</button>
+                <div class="input-group">
+                    <label class="input-label" for="room">Название комнаты</label>
+                    <div class="input-wrapper">
+                        <input id="room" placeholder="Придумайте название" maxlength="30" autocomplete="off">
+                    </div>
+                </div>
 
-            <div class="err" id="err"></div>
+                <div class="input-group">
+                    <label class="input-label" for="pass">Пароль доступа</label>
+                    <div class="input-wrapper">
+                        <input id="pass" type="password" placeholder="Минимум 6 символов" maxlength="50" autocomplete="new-password">
+                    </div>
+                </div>
 
-            <!-- ДИАГНОСТИКА -->
-            <div class="debug" id="debug">
-                <strong>🔍 Диагностика:</strong><br>
-                <span id="debug-status">Загрузка...</span>
+                <button class="btn btn-primary" id="btn" onclick="login()">
+                    <span>🚀</span>
+                    <span>Войти / Создать</span>
+                </button>
+                <button class="btn btn-secondary" onclick="rnd()">
+                    <span>🎲</span>
+                    <span>Случайная комната</span>
+                </button>
+
+                <div class="error" id="err"></div>
             </div>
+        </div>
+
+        <!-- ЭКРАН ЧАТА -->
+        <div id="chat">
+            <header class="header">
+                <div class="room-info">
+                    <div class="room-avatar" id="room-avatar">WV</div>
+                    <div class="room-details">
+                        <h2 id="rn">Комната</h2>
+                        <div class="room-status">
+                            <span class="status-dot" id="status-dot"></span>
+                            <span id="st">Онлайн</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="copy()" title="Пригласить">🔗</button>
+                    <button class="icon-btn danger" onclick="out()" title="Выйти">✕</button>
+                </div>
+            </header>
+
+            <main class="messages" id="msgs">
+                <div class="empty-state">
+                    <div class="empty-state-icon">💬</div>
+                    <div class="empty-state-title">Начните разговор</div>
+                    <p>Напишите первое сообщение — оно исчезнет в 00:00</p>
+                </div>
+            </main>
+
+            <div class="typing-indicator" id="typing">
+                <span>Кто-то печатает</span>
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            <footer class="input-area">
+                <div class="input-wrapper-chat">
+                    <input id="txt" placeholder="Сообщение..." onkeypress="if(event.key==='Enter')send()" autocomplete="off">
+                </div>
+                <button class="send-btn" id="send-btn" onclick="send()" disabled>➤</button>
+            </footer>
         </div>
     </div>
 
-    <!-- ЭКРАН ЧАТА -->
-    <div id="chat">
-        <div class="hdr">
-            <div>
-                <strong id="rn">Комната</strong>
-                <div style="font-size:0.8rem;color:#94a3b8" id="st">● Онлайн</div>
-            </div>
-            <div>
-                <button class="btn" style="width:auto;padding:8px 16px;" onclick="copy()">🔗 Копировать</button>
-                <button class="btn" style="width:auto;padding:8px 16px;background:#ef4444;" onclick="out()">✕ Выйти</button>
-            </div>
-        </div>
-        <div class="msgs" id="msgs"><div style="text-align:center;color:#94a3b8;padding:20px;">История очистится в 00:00</div></div>
-        <div class="inp">
-            <input id="txt" placeholder="Сообщение..." onkeypress="if(event.key==='Enter')send()">
-            <button class="send" onclick="send()">➤</button>
-        </div>
-    </div>
+    <!-- Уведомления -->
+    <div class="toast-container" id="toast-container"></div>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -245,61 +830,25 @@
             measurementId: "G-VKHWR2B45D"
         };
 
-        // === ДИАГНОСТИКА ===
-        const debug = document.getElementById('debug-status');
-        let step = 0;
-
-        function debugLog(msg) {
-            step++;
-            debug.innerHTML += `<br>✅ Шаг ${step}: ${msg}`;
-            console.log('WhisperVault:', msg);
-        }
-
-        function debugError(msg) {
-            debug.innerHTML += `<br>❌ Ошибка: ${msg}`;
-            console.error('WhisperVault:', msg);
-        }
-
-        // Проверка ключей
-        if (firebaseConfig.apiKey.includes('XXXXXXXX')) {
-            debugError('Ключи Firebase не вставлены!');
-            document.getElementById('err').textContent = '⚠️ Вставьте ключи Firebase в код (строка 75)';
-            document.getElementById('err').classList.add('show');
-        } else {
-            debugLog('Ключи Firebase найдены');
-        }
-
-        // Инициализация Firebase
-        try {
-            firebase.initializeApp(firebaseConfig);
-            debugLog('Firebase инициализирован');
-        } catch (e) {
-            debugError('Firebase init: ' + e.message);
-            document.getElementById('err').textContent = '❌ Ошибка Firebase: ' + e.message;
-            document.getElementById('err').classList.add('show');
-        }
-
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const auth = firebase.auth();
         let u, r, p, mr;
 
         // Анонимная авторизация
-        auth.signInAnonymously()
-            .then(() => debugLog('Анонимный вход успешен'))
-            .catch(e => {
-                debugError('Auth: ' + e.message);
-                document.getElementById('err').textContent = '❌ Ошибка входа: ' + e.message;
-                document.getElementById('err').classList.add('show');
-            });
+        auth.signInAnonymously().catch(console.error);
 
-        // Проверка подключения к базе
+        // Проверка подключения
         db.ref('.info/connected').on('value', connected => {
+            const dot = document.getElementById('status-dot');
+            const status = document.getElementById('st');
             if (connected) {
-                debugLog('Подключение к базе данных: ОК');
-                document.getElementById('st').textContent = '● Онлайн';
+                dot.classList.remove('offline');
+                status.textContent = 'Онлайн';
             } else {
-                debugError('Нет подключения к базе');
-                document.getElementById('st').textContent = '○ Офлайн';
+                dot.classList.add('offline');
+                status.textContent = 'Офлайн';
+                showToast('Потеряно соединение', 'warning');
             }
         });
 
@@ -311,14 +860,22 @@
             const e = document.getElementById('err');
             const b = document.getElementById('btn');
 
-            if (n.length < 2) { e.textContent = '⚠️ Ник мин. 2 символа'; e.classList.add('show'); return; }
-            if (rm.length < 3) { e.textContent = '⚠️ Комната мин. 3 символа'; e.classList.add('show'); return; }
-            if (pw.length < 6) { e.textContent = '⚠️ Пароль мин. 6 символов'; e.classList.add('show'); return; }
+            if (n.length < 2) {
+                showError('⚠️ Ник минимум 2 символа');
+                return;
+            }
+            if (rm.length < 3) {
+                showError('⚠️ Комната минимум 3 символа');
+                return;
+            }
+            if (pw.length < 6) {
+                showError('⚠️ Пароль минимум 6 символов');
+                return;
+            }
 
             e.classList.remove('show');
             b.disabled = true;
-            b.textContent = 'Подключение...';
-            debugLog('Попытка входа: комната=' + rm);
+            b.innerHTML = '<span>⏳</span><span>Подключение...</span>';
 
             try {
                 const ref = db.ref('rooms/' + rm);
@@ -326,36 +883,38 @@
                 const d = s.val();
 
                 if (d) {
-                    debugLog('Комната найдена, проверка пароля...');
                     if (d.pass !== await sha256(pw)) throw new Error('Неверный пароль');
+                    if (d.lastReset !== new Date().toDateString()) {
+                        await db.ref('rooms/' + rm + '/messages').remove();
+                        await ref.update({ lastReset: new Date().toDateString() });
+                    }
                 } else {
-                    debugLog('Комната не найдена, создаём новую...');
                     await ref.set({
                         pass: await sha256(pw),
                         lastReset: new Date().toDateString(),
                         created: Date.now(),
                         owner: n
                     });
-                    debugLog('Комната создана!');
                 }
 
-                u = n; r = rm; p = pw;
+                u = n;
+                r = rm;
+                p = pw;
                 sessionStorage.setItem('wv', JSON.stringify({ n, r, p }));
                 mr = db.ref('rooms/' + r + '/messages');
 
-                debugLog('Вход успешен, переключаем экран...');
                 document.getElementById('login').style.display = 'none';
-                document.getElementById('chat').style.display = 'flex';
+                document.getElementById('chat').classList.add('active');
                 document.getElementById('rn').textContent = r;
+                document.getElementById('room-avatar').textContent = r.slice(0, 2).toUpperCase();
 
                 load();
+                showToast('Добро пожаловать!', 'success');
             } catch (x) {
-                debugError('Login: ' + x.message);
-                e.textContent = '❌ ' + x.message;
-                e.classList.add('show');
+                showError(x.message === 'Неверный пароль' ? '🔒 Неверный пароль' : '❌ ' + x.message);
             } finally {
                 b.disabled = false;
-                b.textContent = '🚀 Войти / Создать';
+                b.innerHTML = '<span>🚀</span><span>Войти / Создать</span>';
             }
         }
 
@@ -364,36 +923,48 @@
             const w = Math.random().toString(36).slice(2, 10);
             document.getElementById('room').value = i;
             document.getElementById('pass').value = w;
-            debugLog('Сгенерированы случайные данные');
+            showToast('Случайные данные сгенерированы', 'success');
         }
 
         function out() {
-            sessionStorage.removeItem('wv');
-            location.reload();
+            if (confirm('Выйти из комнаты?')) {
+                sessionStorage.removeItem('wv');
+                location.reload();
+            }
         }
 
         function send() {
             const t = document.getElementById('txt').value.trim();
             if (!t || !mr) return;
+
             mr.push({
                 nick: u,
                 text: t,
                 time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
                 ts: firebase.database.ServerValue.TIMESTAMP
             });
+
             document.getElementById('txt').value = '';
-            document.getElementById('msgs').scrollTop = document.getElementById('msgs').scrollHeight;
+            document.getElementById('send-btn').disabled = true;
+            scrollToBottom();
         }
 
         function load() {
-            debugLog('Загрузка сообщений...');
+            document.querySelector('.empty-state')?.remove();
+
             mr.orderByChild('ts').limitToLast(50).on('child_added', s => {
                 const m = s.val();
                 const d = document.createElement('div');
-                d.className = 'msg ' + (m.nick === u ? 'out' : 'in');
-                d.innerHTML = '<div class="meta"><strong>' + esc(m.nick) + '</strong> ' + m.time + '</div>' + esc(m.text).replace(/\n/g, '<br>');
+                d.className = 'message ' + (m.nick === u ? 'outgoing' : 'incoming');
+                d.innerHTML = `
+              <div class="message-meta">
+                <strong>${esc(m.nick)}</strong>
+                <span class="message-time">${m.time}</span>
+              </div>
+              ${esc(m.text).replace(/\n/g, '<br>')}
+            `;
                 document.getElementById('msgs').appendChild(d);
-                document.getElementById('msgs').scrollTop = document.getElementById('msgs').scrollHeight;
+                scrollToBottom();
             });
         }
 
@@ -407,25 +978,58 @@
         }
 
         function copy() {
-            navigator.clipboard.writeText('Комната: ' + r + '\nПароль: ' + p + '\nСсылка: ' + location.href)
-                .then(() => alert('✓ Скопировано!'));
+            const text = `🗝️ WhisperVault\n\n📁 Комната: ${r}\n🔑 Пароль: ${p}\n\n🔗 ${location.href}`;
+            navigator.clipboard.writeText(text).then(() => showToast('Приглашение скопировано!', 'success'));
         }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+            <span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : '⚠'}</span>
+            <span>${esc(message)}</span>
+          `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function showError(msg) {
+            const e = document.getElementById('err');
+            e.textContent = msg;
+            e.classList.add('show');
+            setTimeout(() => e.classList.remove('show'), 5000);
+        }
+
+        function scrollToBottom() {
+            const el = document.getElementById('msgs');
+            el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+        }
+
+        // Активация кнопки отправки
+        document.getElementById('txt').addEventListener('input', function () {
+            document.getElementById('send-btn').disabled = !this.value.trim();
+        });
 
         // Восстановление сессии
         window.onload = () => {
-            debugLog('Страница загружена');
             const s = sessionStorage.getItem('wv');
             if (s) {
                 const { n, r, p } = JSON.parse(s);
                 document.getElementById('nick').value = n;
                 document.getElementById('room').value = r;
                 document.getElementById('pass').value = p;
-                debugLog('Сессия восстановлена');
             }
         };
 
-        window.addEventListener('online', () => document.getElementById('st').textContent = '● Онлайн');
-        window.addEventListener('offline', () => document.getElementById('st').textContent = '○ Офлайн');
+        // Предотвращение зума на iPhone
+        document.addEventListener('gesturestart', function (e) {
+            e.preventDefault();
+        });
     </script>
 </body>
 </html>
